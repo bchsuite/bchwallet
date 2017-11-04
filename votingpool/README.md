@@ -1,10 +1,10 @@
 votingpool
 ========
 
-[![Build Status](https://travis-ci.org/btcsuite/btcwallet.png?branch=master)]
-(https://travis-ci.org/btcsuite/btcwallet)
+[![Build Status](https://travis-ci.org/bchsuite/bchwallet.png?branch=master)]
+(https://travis-ci.org/bchsuite/bchwallet)
 
-Package votingpool provides voting pool functionality for btcwallet as
+Package votingpool provides voting pool functionality for bchwallet as
 described here:
 [Voting Pools](http://opentransactions.org/wiki/index.php?title=Category:Voting_Pools).
 

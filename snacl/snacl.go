@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2017 The btcsuite developers
+// Copyright (c) 2014-2017 The bchsuite developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -14,8 +14,8 @@ import (
 	"runtime/debug"
 
 	"github.com/bchsuite/bchwallet/internal/zero"
-	"github.com/btcsuite/golangcrypto/nacl/secretbox"
-	"github.com/btcsuite/golangcrypto/scrypt"
+	"github.com/bchsuite/golangcrypto/nacl/secretbox"
+	"github.com/bchsuite/golangcrypto/scrypt"
 )
 
 var (

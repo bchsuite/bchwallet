@@ -1,8 +1,8 @@
 wallet
 ======
 
-[![Build Status](https://travis-ci.org/btcsuite/btcwallet.png?branch=master)]
-(https://travis-ci.org/btcsuite/btcwallet)
+[![Build Status](https://travis-ci.org/bchsuite/bchwallet.png?branch=master)]
+(https://travis-ci.org/bchsuite/bchwallet)
 
 ## Feature Overview
 

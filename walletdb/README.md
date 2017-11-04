@@ -1,10 +1,10 @@
 walletdb
 ========
 
-[![Build Status](https://travis-ci.org/btcsuite/btcwallet.png?branch=master)]
-(https://travis-ci.org/btcsuite/btcwallet)
+[![Build Status](https://travis-ci.org/bchsuite/bchwallet.png?branch=master)]
+(https://travis-ci.org/bchsuite/bchwallet)
 
-Package walletdb provides a namespaced database interface for btcwallet.
+Package walletdb provides a namespaced database interface for bchwallet.
 
 A wallet essentially consists of a multitude of stored data such as private
 and public keys, key derivation bits, pay-to-script-hash scripts, and various

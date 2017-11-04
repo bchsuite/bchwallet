@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2016 The btcsuite developers
+// Copyright (c) 2014-2016 The bchsuite developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/bchsuite/bchd/btcec"
+	"github.com/bchsuite/bchd/bchec"
 	"github.com/bchsuite/bchd/chaincfg"
 	"github.com/bchsuite/bchd/chaincfg/chainhash"
 	"github.com/bchsuite/bchutil"
@@ -643,13 +643,13 @@ func (m *Manager) importedAddressRowToManaged(row *dbImportedAddressRow) (Manage
 		return nil, managerError(ErrCrypto, str, err)
 	}
 
-	pubKey, err := btcec.ParsePubKey(pubBytes, btcec.S256())
+	pubKey, err := bchec.ParsePubKey(pubBytes, bchec.S256())
 	if err != nil {
 		str := "invalid public key for imported address"
 		return nil, managerError(ErrCrypto, str, err)
 	}
 
-	compressed := len(pubBytes) == btcec.PubKeyBytesLenCompressed
+	compressed := len(pubBytes) == bchec.PubKeyBytesLenCompressed
 	ma, err := newManagedAddressWithoutPrivKey(m, row.account, pubKey,
 		compressed)
 	if err != nil {
@@ -699,7 +699,7 @@ func (m *Manager) rowInterfaceToManaged(rowInterface interface{}) (ManagedAddres
 // caches the associated managed address.
 //
 // This function MUST be called with the manager lock held for writes.
-func (m *Manager) loadAndCacheAddress(address btcutil.Address) (ManagedAddress, error) {
+func (m *Manager) loadAndCacheAddress(address bchutil.Address) (ManagedAddress, error) {
 	// Attempt to load the raw address information from the database.
 	var rowInterface interface{}
 	err := m.namespace.View(func(tx walletdb.Tx) error {
@@ -735,13 +735,13 @@ func (m *Manager) loadAndCacheAddress(address btcutil.Address) (ManagedAddress, 
 // transactions such as the associated private key for pay-to-pubkey and
 // pay-to-pubkey-hash addresses and the script associated with
 // pay-to-script-hash addresses.
-func (m *Manager) Address(address btcutil.Address) (ManagedAddress, error) {
+func (m *Manager) Address(address bchutil.Address) (ManagedAddress, error) {
 	// ScriptAddress will only return a script hash if we're
 	// accessing an address that is either PKH or SH. In
 	// the event we're passed a PK address, convert the
 	// PK to PKH address so that we can access it from
 	// the addrs map and database.
-	if pka, ok := address.(*btcutil.AddressPubKey); ok {
+	if pka, ok := address.(*bchutil.AddressPubKey); ok {
 		address = pka.AddressPubKeyHash()
 	}
 
@@ -764,7 +764,7 @@ func (m *Manager) Address(address btcutil.Address) (ManagedAddress, error) {
 }
 
 // AddrAccount returns the account to which the given address belongs.
-func (m *Manager) AddrAccount(address btcutil.Address) (uint32, error) {
+func (m *Manager) AddrAccount(address bchutil.Address) (uint32, error) {
 	var account uint32
 	err := m.namespace.View(func(tx walletdb.Tx) error {
 		var err error
@@ -1060,7 +1060,7 @@ func (m *Manager) existsAddress(addressID []byte) (bool, error) {
 // watching-only, or not for the same network as the key trying to be imported.
 // It will also return an error if the address already exists.  Any other errors
 // returned are generally unexpected.
-func (m *Manager) ImportPrivateKey(wif *btcutil.WIF, bs *BlockStamp) (ManagedPubKeyAddress, error) {
+func (m *Manager) ImportPrivateKey(wif *bchutil.WIF, bs *BlockStamp) (ManagedPubKeyAddress, error) {
 	// Ensure the address is intended for network the address manager is
 	// associated with.
 	if !wif.IsForNet(m.chainParams) {
@@ -1080,7 +1080,7 @@ func (m *Manager) ImportPrivateKey(wif *btcutil.WIF, bs *BlockStamp) (ManagedPub
 
 	// Prevent duplicates.
 	serializedPubKey := wif.SerializePubKey()
-	pubKeyHash := btcutil.Hash160(serializedPubKey)
+	pubKeyHash := bchutil.Hash160(serializedPubKey)
 	alreadyExists, err := m.existsAddress(pubKeyHash)
 	if err != nil {
 		return nil, err
@@ -1147,7 +1147,7 @@ func (m *Manager) ImportPrivateKey(wif *btcutil.WIF, bs *BlockStamp) (ManagedPub
 		managedAddr, err = newManagedAddress(m, ImportedAddrAccount,
 			wif.PrivKey, wif.CompressPubKey)
 	} else {
-		pubKey := (*btcec.PublicKey)(&wif.PrivKey.PublicKey)
+		pubKey := (*bchec.PublicKey)(&wif.PrivKey.PublicKey)
 		managedAddr, err = newManagedAddressWithoutPrivKey(m,
 			ImportedAddrAccount, pubKey, wif.CompressPubKey)
 	}
@@ -1184,7 +1184,7 @@ func (m *Manager) ImportScript(script []byte, bs *BlockStamp) (ManagedScriptAddr
 	}
 
 	// Prevent duplicates.
-	scriptHash := btcutil.Hash160(script)
+	scriptHash := bchutil.Hash160(script)
 	alreadyExists, err := m.existsAddress(scriptHash)
 	if err != nil {
 		return nil, err
@@ -1451,7 +1451,7 @@ func (m *Manager) fetchUsed(addressID []byte) (bool, error) {
 }
 
 // MarkUsed updates the used flag for the provided address.
-func (m *Manager) MarkUsed(address btcutil.Address) error {
+func (m *Manager) MarkUsed(address bchutil.Address) error {
 	addressID := address.ScriptAddress()
 	err := m.namespace.Update(func(tx walletdb.Tx) error {
 		return markAddressUsed(tx, addressID)
@@ -1954,7 +1954,7 @@ func (m *Manager) ForEachActiveAccountAddress(account uint32, fn func(maddr Mana
 
 // ForEachActiveAddress calls the given function with each active address
 // stored in the manager, breaking early on error.
-func (m *Manager) ForEachActiveAddress(fn func(addr btcutil.Address) error) error {
+func (m *Manager) ForEachActiveAddress(fn func(addr bchutil.Address) error) error {
 	m.mtx.Lock()
 	defer m.mtx.Unlock()
 

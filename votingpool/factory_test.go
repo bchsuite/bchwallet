@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2016 The btcsuite developers
+ * Copyright (c) 2014-2016 The bchsuite developers
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -62,7 +62,7 @@ func createWithdrawalTx(t *testing.T, pool *Pool, inputAmounts []int64, outputAm
 	}
 	for i, amount := range outputAmounts {
 		request := TstNewOutputRequest(
-			t, uint32(i), "34eVkREKgvvGASZW7hkgE2uNc1yycntMK6", btcutil.Amount(amount), net)
+			t, uint32(i), "34eVkREKgvvGASZW7hkgE2uNc1yycntMK6", bchutil.Amount(amount), net)
 		tx.addOutput(request)
 	}
 	return tx
@@ -267,7 +267,7 @@ func TstCreateSeriesCredits(t *testing.T, pool *Pool, seriesID uint32, amounts [
 			BlockMeta: wtxmgr.BlockMeta{
 				Block: wtxmgr.Block{Height: TstInputsBlock},
 			},
-			Amount:   btcutil.Amount(msgTx.TxOut[i].Value),
+			Amount:   bchutil.Amount(msgTx.TxOut[i].Value),
 			PkScript: msgTx.TxOut[i].PkScript,
 		}
 		credits[i] = newCredit(c, *addr)
@@ -319,7 +319,7 @@ func TstCreateCreditsOnStore(t *testing.T, s *wtxmgr.Store, pkScript []byte,
 				Index: uint32(i),
 			},
 			BlockMeta: *meta,
-			Amount:    btcutil.Amount(msgTx.TxOut[i].Value),
+			Amount:    bchutil.Amount(msgTx.TxOut[i].Value),
 			PkScript:  msgTx.TxOut[i].PkScript,
 		}
 	}
@@ -377,9 +377,9 @@ func TstCreatePool(t *testing.T) (tearDownFunc func(), mgr *waddrmgr.Manager, po
 	return tearDownFunc, mgr, pool
 }
 
-func TstNewOutputRequest(t *testing.T, transaction uint32, address string, amount btcutil.Amount,
+func TstNewOutputRequest(t *testing.T, transaction uint32, address string, amount bchutil.Amount,
 	net *chaincfg.Params) OutputRequest {
-	addr, err := btcutil.DecodeAddress(address, net)
+	addr, err := bchutil.DecodeAddress(address, net)
 	if err != nil {
 		t.Fatalf("Unable to decode address %s", address)
 	}
@@ -427,8 +427,8 @@ func TstNewChangeAddress(t *testing.T, p *Pool, seriesID uint32, idx Index) (add
 	return addr
 }
 
-func TstConstantFee(fee btcutil.Amount) func() btcutil.Amount {
-	return func() btcutil.Amount { return fee }
+func TstConstantFee(fee bchutil.Amount) func() bchutil.Amount {
+	return func() bchutil.Amount { return fee }
 }
 
 func createAndFulfillWithdrawalRequests(t *testing.T, pool *Pool, roundID uint32) withdrawalInfo {
@@ -440,7 +440,7 @@ func createAndFulfillWithdrawalRequests(t *testing.T, pool *Pool, roundID uint32
 		TstNewOutputRequest(t, 2, "3PbExiaztsSYgh6zeMswC49hLUwhTQ86XG", 2e6, params),
 	}
 	changeStart := TstNewChangeAddress(t, pool, seriesID, 0)
-	dustThreshold := btcutil.Amount(1e4)
+	dustThreshold := bchutil.Amount(1e4)
 	startAddr := TstNewWithdrawalAddress(t, pool, seriesID, 1, 0)
 	lastSeriesID := seriesID
 	w := newWithdrawal(roundID, requests, eligible, *changeStart)

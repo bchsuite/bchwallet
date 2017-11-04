@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016 The btcsuite developers
+ * Copyright (c) 2015-2016 The bchsuite developers
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -99,7 +99,7 @@ func (c byAddress) Less(i, j int) bool {
 // and the last used address of lastSeriesID. They're reverse ordered based on
 // their address.
 func (p *Pool) getEligibleInputs(store *wtxmgr.Store, startAddress WithdrawalAddress,
-	lastSeriesID uint32, dustThreshold btcutil.Amount, chainHeight int32,
+	lastSeriesID uint32, dustThreshold bchutil.Amount, chainHeight int32,
 	minConf int) ([]credit, error) {
 
 	if p.Series(lastSeriesID) == nil {
@@ -237,7 +237,7 @@ func groupCreditsByAddr(credits []wtxmgr.Credit, chainParams *chaincfg.Params) (
 // to number of confirmations, the dust threshold and that it is not
 // the charter output.
 func (p *Pool) isCreditEligible(c credit, minConf int, chainHeight int32,
-	dustThreshold btcutil.Amount) bool {
+	dustThreshold bchutil.Amount) bool {
 	if c.Amount < dustThreshold {
 		return false
 	}

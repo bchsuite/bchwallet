@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2016 The btcsuite developers
+// Copyright (c) 2013-2016 The bchsuite developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -18,8 +18,8 @@ import (
 	"time"
 
 	"github.com/bchsuite/bchd/blockchain"
-	"github.com/bchsuite/bchd/btcec"
-	"github.com/bchsuite/bchd/btcjson"
+	"github.com/bchsuite/bchd/bchec"
+	"github.com/bchsuite/bchd/bchjson"
 	"github.com/bchsuite/bchd/chaincfg"
 	"github.com/bchsuite/bchd/chaincfg/chainhash"
 	"github.com/bchsuite/bchd/txscript"
@@ -77,7 +77,7 @@ type Wallet struct {
 	chainClientSyncMtx sync.Mutex
 
 	lockedOutpoints map[wire.OutPoint]struct{}
-	relayFee        btcutil.Amount
+	relayFee        bchutil.Amount
 	relayFeeMu      sync.Mutex
 
 	// Channels for rescan processing.  Requests are added and merged with
@@ -197,7 +197,7 @@ func (w *Wallet) ChainClient() *chain.RPCClient {
 
 // RelayFee returns the current minimum relay fee (per kB of serialized
 // transaction) used when constructing transactions.
-func (w *Wallet) RelayFee() btcutil.Amount {
+func (w *Wallet) RelayFee() bchutil.Amount {
 	w.relayFeeMu.Lock()
 	relayFee := w.relayFee
 	w.relayFeeMu.Unlock()
@@ -206,7 +206,7 @@ func (w *Wallet) RelayFee() btcutil.Amount {
 
 // SetRelayFee sets a new minimum relay fee (per kB of serialized
 // transaction) used when constructing transactions.
-func (w *Wallet) SetRelayFee(relayFee btcutil.Amount) {
+func (w *Wallet) SetRelayFee(relayFee bchutil.Amount) {
 	w.relayFeeMu.Lock()
 	w.relayFee = relayFee
 	w.relayFeeMu.Unlock()
@@ -285,7 +285,7 @@ func (w *Wallet) ChainSynced() bool {
 // SetChainSynced marks whether the wallet is connected to and currently in sync
 // with the latest block notified by the chain server.
 //
-// NOTE: Due to an API limitation with btcrpcclient, this may return true after
+// NOTE: Due to an API limitation with bchrpcclient, this may return true after
 // the client disconnected (and is attempting a reconnect).  This will be unknown
 // until the reconnect notification is received, at which point the wallet can be
 // marked out of sync again until after the next rescan completes.
@@ -298,9 +298,9 @@ func (w *Wallet) SetChainSynced(synced bool) {
 // activeData returns the currently-active receiving addresses and all unspent
 // outputs.  This is primarely intended to provide the parameters for a
 // rescan request.
-func (w *Wallet) activeData() ([]btcutil.Address, []wtxmgr.Credit, error) {
-	var addrs []btcutil.Address
-	err := w.Manager.ForEachActiveAddress(func(addr btcutil.Address) error {
+func (w *Wallet) activeData() ([]bchutil.Address, []wtxmgr.Credit, error) {
+	var addrs []bchutil.Address
+	err := w.Manager.ForEachActiveAddress(func(addr bchutil.Address) error {
 		addrs = append(addrs, addr)
 		return nil
 	})
@@ -324,9 +324,9 @@ func (w *Wallet) syncWithChain() error {
 	// Request notifications for connected and disconnected blocks.
 	//
 	// TODO(jrick): Either request this notification only once, or when
-	// btcrpcclient is modified to allow some notification request to not
+	// bchrpcclient is modified to allow some notification request to not
 	// automatically resent on reconnect, include the notifyblocks request
-	// as well.  I am leaning towards allowing off all btcrpcclient
+	// as well.  I am leaning towards allowing off all bchrpcclient
 	// notification re-registrations, in which case the code here should be
 	// left as is.
 	err = chainClient.NotifyBlocks()
@@ -656,7 +656,7 @@ func (w *Wallet) AccountUsed(account uint32) (bool, error) {
 // a UTXO must be in a block.  If confirmations is 1 or greater,
 // the balance will be calculated based on how many how many blocks
 // include a UTXO.
-func (w *Wallet) CalculateBalance(confirms int32) (btcutil.Amount, error) {
+func (w *Wallet) CalculateBalance(confirms int32) (bchutil.Amount, error) {
 	blk := w.Manager.SyncedTo()
 	return w.TxStore.Balance(confirms, blk.Height)
 }
@@ -664,9 +664,9 @@ func (w *Wallet) CalculateBalance(confirms int32) (btcutil.Amount, error) {
 // Balances records total, spendable (by policy), and immature coinbase
 // reward balance amounts.
 type Balances struct {
-	Total          btcutil.Amount
-	Spendable      btcutil.Amount
-	ImmatureReward btcutil.Amount
+	Total          bchutil.Amount
+	Spendable      bchutil.Amount
+	ImmatureReward bchutil.Amount
 }
 
 // CalculateAccountBalances sums the amounts of all unspent transaction
@@ -712,9 +712,9 @@ func (w *Wallet) CalculateAccountBalances(account uint32, confirms int32) (Balan
 
 // CurrentAddress gets the most recently requested Bitcoin payment address
 // from a wallet.  If the address has already been used (there is at least
-// one transaction spending to it in the blockchain or btcd mempool), the next
+// one transaction spending to it in the blockchain or bchd mempool), the next
 // chained address is returned.
-func (w *Wallet) CurrentAddress(account uint32) (btcutil.Address, error) {
+func (w *Wallet) CurrentAddress(account uint32) (bchutil.Address, error) {
 	addr, err := w.Manager.LastExternalAddress(account)
 	if err != nil {
 		// If no address exists yet, create the first external address
@@ -825,7 +825,7 @@ func RecvCategory(details *wtxmgr.TxDetails, syncHeight int32, net *chaincfg.Par
 //
 // TODO: This should be moved to the legacyrpc package.
 func ListTransactions(details *wtxmgr.TxDetails, addrMgr *waddrmgr.Manager,
-	syncHeight int32, net *chaincfg.Params) []btcjson.ListTransactionsResult {
+	syncHeight int32, net *chaincfg.Params) []bchjson.ListTransactionsResult {
 
 	var (
 		blockHashStr  string
@@ -838,7 +838,7 @@ func ListTransactions(details *wtxmgr.TxDetails, addrMgr *waddrmgr.Manager,
 		confirmations = int64(confirms(details.Block.Height, syncHeight))
 	}
 
-	results := []btcjson.ListTransactionsResult{}
+	results := []bchjson.ListTransactionsResult{}
 	txHashStr := details.Hash.String()
 	received := details.Received.Unix()
 	generated := blockchain.IsCoinBaseTx(&details.MsgTx)
@@ -849,18 +849,18 @@ func ListTransactions(details *wtxmgr.TxDetails, addrMgr *waddrmgr.Manager,
 	// Fee can only be determined if every input is a debit.
 	var feeF64 float64
 	if len(details.Debits) == len(details.MsgTx.TxIn) {
-		var debitTotal btcutil.Amount
+		var debitTotal bchutil.Amount
 		for _, deb := range details.Debits {
 			debitTotal += deb.Amount
 		}
-		var outputTotal btcutil.Amount
+		var outputTotal bchutil.Amount
 		for _, output := range details.MsgTx.TxOut {
-			outputTotal += btcutil.Amount(output.Value)
+			outputTotal += bchutil.Amount(output.Value)
 		}
 		// Note: The actual fee is debitTotal - outputTotal.  However,
 		// this RPC reports negative numbers for fees, so the inverse
 		// is calculated.
-		feeF64 = (outputTotal - debitTotal).ToBTC()
+		feeF64 = (outputTotal - debitTotal).ToBCH()
 	}
 
 outputs:
@@ -897,8 +897,8 @@ outputs:
 			}
 		}
 
-		amountF64 := btcutil.Amount(output.Value).ToBTC()
-		result := btcjson.ListTransactionsResult{
+		amountF64 := bchutil.Amount(output.Value).ToBCH()
+		result := bchjson.ListTransactionsResult{
 			// Fields left zeroed:
 			//   InvolvesWatchOnly
 			//   BlockIndex
@@ -950,8 +950,8 @@ outputs:
 // ListSinceBlock returns a slice of objects with details about transactions
 // since the given block. If the block is -1 then all transactions are included.
 // This is intended to be used for listsinceblock RPC replies.
-func (w *Wallet) ListSinceBlock(start, end, syncHeight int32) ([]btcjson.ListTransactionsResult, error) {
-	txList := []btcjson.ListTransactionsResult{}
+func (w *Wallet) ListSinceBlock(start, end, syncHeight int32) ([]bchjson.ListTransactionsResult, error) {
+	txList := []bchjson.ListTransactionsResult{}
 	err := w.TxStore.RangeTransactions(start, end, func(details []wtxmgr.TxDetails) (bool, error) {
 		for _, detail := range details {
 			jsonResults := ListTransactions(&detail, w.Manager,
@@ -966,8 +966,8 @@ func (w *Wallet) ListSinceBlock(start, end, syncHeight int32) ([]btcjson.ListTra
 // ListTransactions returns a slice of objects with details about a recorded
 // transaction.  This is intended to be used for listtransactions RPC
 // replies.
-func (w *Wallet) ListTransactions(from, count int) ([]btcjson.ListTransactionsResult, error) {
-	txList := []btcjson.ListTransactionsResult{}
+func (w *Wallet) ListTransactions(from, count int) ([]bchjson.ListTransactionsResult, error) {
+	txList := []bchjson.ListTransactionsResult{}
 
 	// Get current block.  The block height used for calculating
 	// the number of tx confirmations.
@@ -1011,9 +1011,9 @@ func (w *Wallet) ListTransactions(from, count int) ([]btcjson.ListTransactionsRe
 // recorded transactions to or from any address belonging to a set.  This is
 // intended to be used for listaddresstransactions RPC replies.
 func (w *Wallet) ListAddressTransactions(pkHashes map[string]struct{}) (
-	[]btcjson.ListTransactionsResult, error) {
+	[]bchjson.ListTransactionsResult, error) {
 
-	txList := []btcjson.ListTransactionsResult{}
+	txList := []bchjson.ListTransactionsResult{}
 
 	// Get current block.  The block height used for calculating
 	// the number of tx confirmations.
@@ -1031,7 +1031,7 @@ func (w *Wallet) ListAddressTransactions(pkHashes map[string]struct{}) (
 				if err != nil || len(addrs) != 1 {
 					continue
 				}
-				apkh, ok := addrs[0].(*btcutil.AddressPubKeyHash)
+				apkh, ok := addrs[0].(*bchutil.AddressPubKeyHash)
 				if !ok {
 					continue
 				}
@@ -1058,8 +1058,8 @@ func (w *Wallet) ListAddressTransactions(pkHashes map[string]struct{}) (
 // ListAllTransactions returns a slice of objects with details about a recorded
 // transaction.  This is intended to be used for listalltransactions RPC
 // replies.
-func (w *Wallet) ListAllTransactions() ([]btcjson.ListTransactionsResult, error) {
-	txList := []btcjson.ListTransactionsResult{}
+func (w *Wallet) ListAllTransactions() ([]bchjson.ListTransactionsResult, error) {
+	txList := []bchjson.ListTransactionsResult{}
 
 	// Get current block.  The block height used for calculating
 	// the number of tx confirmations.
@@ -1127,7 +1127,7 @@ func (w *Wallet) GetTransactions(startBlock, endBlock *BlockIdentifier, cancel <
 	// TODO: Fetching block heights by their hashes is inherently racy
 	// because not all block headers are saved but when they are for SPV the
 	// db can be queried directly without this.
-	var startResp, endResp btcrpcclient.FutureGetBlockVerboseResult
+	var startResp, endResp bchrpcclient.FutureGetBlockVerboseResult
 	if startBlock != nil {
 		if startBlock.hash == nil {
 			start = startBlock.height
@@ -1201,7 +1201,7 @@ func (w *Wallet) GetTransactions(startBlock, endBlock *BlockIdentifier, cancel <
 // AccountResult is a single account result for the AccountsResult type.
 type AccountResult struct {
 	waddrmgr.AccountProperties
-	TotalBalance btcutil.Amount
+	TotalBalance bchutil.Amount
 }
 
 // AccountsResult is the resutl of the wallet's Accounts method.  See that
@@ -1239,7 +1239,7 @@ func (w *Wallet) Accounts() (*AccountsResult, error) {
 	if err != nil {
 		return nil, err
 	}
-	m := make(map[uint32]*btcutil.Amount)
+	m := make(map[uint32]*bchutil.Amount)
 	for i := range accounts {
 		a := &accounts[i]
 		m[a.AccountNumber] = &a.TotalBalance
@@ -1309,7 +1309,7 @@ func (s creditSlice) Swap(i, j int) {
 // contained within it will be considered.  If we know nothing about a
 // transaction an empty array will be returned.
 func (w *Wallet) ListUnspent(minconf, maxconf int32,
-	addresses map[string]struct{}) ([]*btcjson.ListUnspentResult, error) {
+	addresses map[string]struct{}) ([]*bchjson.ListUnspentResult, error) {
 
 	syncBlock := w.Manager.SyncedTo()
 
@@ -1326,7 +1326,7 @@ func (w *Wallet) ListUnspent(minconf, maxconf int32,
 		return nil, err
 	}
 
-	results := make([]*btcjson.ListUnspentResult, 0, len(unspent))
+	results := make([]*bchjson.ListUnspentResult, 0, len(unspent))
 	for i := range unspent {
 		output := &unspent[i]
 
@@ -1417,12 +1417,12 @@ func (w *Wallet) ListUnspent(minconf, maxconf int32,
 			spendable = true
 		}
 
-		result := &btcjson.ListUnspentResult{
+		result := &bchjson.ListUnspentResult{
 			TxID:          output.OutPoint.Hash.String(),
 			Vout:          output.OutPoint.Index,
 			Account:       acctName,
 			ScriptPubKey:  hex.EncodeToString(output.PkScript),
-			Amount:        output.Amount.ToBTC(),
+			Amount:        output.Amount.ToBCH(),
 			Confirmations: int64(confs),
 			Spendable:     spendable,
 		}
@@ -1446,7 +1446,7 @@ func (w *Wallet) DumpPrivKeys() ([]string, error) {
 	var privkeys []string
 	// Iterate over each active address, appending the private key to
 	// privkeys.
-	err := w.Manager.ForEachActiveAddress(func(addr btcutil.Address) error {
+	err := w.Manager.ForEachActiveAddress(func(addr bchutil.Address) error {
 		ma, err := w.Manager.Address(addr)
 		if err != nil {
 			return err
@@ -1473,7 +1473,7 @@ func (w *Wallet) DumpPrivKeys() ([]string, error) {
 
 // DumpWIFPrivateKey returns the WIF encoded private key for a
 // single wallet address.
-func (w *Wallet) DumpWIFPrivateKey(addr btcutil.Address) (string, error) {
+func (w *Wallet) DumpWIFPrivateKey(addr bchutil.Address) (string, error) {
 	// Get private key from wallet if it exists.
 	address, err := w.Manager.Address(addr)
 	if err != nil {
@@ -1494,7 +1494,7 @@ func (w *Wallet) DumpWIFPrivateKey(addr btcutil.Address) (string, error) {
 
 // ImportPrivateKey imports a private key to the wallet and writes the new
 // wallet to disk.
-func (w *Wallet) ImportPrivateKey(wif *btcutil.WIF, bs *waddrmgr.BlockStamp,
+func (w *Wallet) ImportPrivateKey(wif *bchutil.WIF, bs *waddrmgr.BlockStamp,
 	rescan bool) (string, error) {
 
 	// The starting block for the key is the genesis block unless otherwise
@@ -1516,7 +1516,7 @@ func (w *Wallet) ImportPrivateKey(wif *btcutil.WIF, bs *waddrmgr.BlockStamp,
 	// imported address.
 	if rescan {
 		job := &RescanJob{
-			Addrs:      []btcutil.Address{addr.Address()},
+			Addrs:      []bchutil.Address{addr.Address()},
 			OutPoints:  nil,
 			BlockStamp: *bs,
 		}
@@ -1546,7 +1546,7 @@ func (w *Wallet) ImportPrivateKey(wif *btcutil.WIF, bs *waddrmgr.BlockStamp,
 // ExportWatchingWallet returns a watching-only version of the wallet serialized
 // database as a base64-encoded string.
 func (w *Wallet) ExportWatchingWallet() (string, error) {
-	tmpDir, err := ioutil.TempDir("", "btcwallet")
+	tmpDir, err := ioutil.TempDir("", "bchwallet")
 	if err != nil {
 		return "", err
 	}
@@ -1637,11 +1637,11 @@ func (w *Wallet) ResetLockedOutpoints() {
 // LockedOutpoints returns a slice of currently locked outpoints.  This is
 // intended to be used by marshaling the result as a JSON array for
 // listlockunspent RPC results.
-func (w *Wallet) LockedOutpoints() []btcjson.TransactionInput {
-	locked := make([]btcjson.TransactionInput, len(w.lockedOutpoints))
+func (w *Wallet) LockedOutpoints() []bchjson.TransactionInput {
+	locked := make([]bchjson.TransactionInput, len(w.lockedOutpoints))
 	i := 0
 	for op := range w.lockedOutpoints {
-		locked[i] = btcjson.TransactionInput{
+		locked[i] = bchjson.TransactionInput{
 			Txid: op.Hash.String(),
 			Vout: op.Index,
 		}
@@ -1682,7 +1682,7 @@ func (w *Wallet) ResendUnminedTxs() {
 // addresses in a wallet.
 func (w *Wallet) SortedActivePaymentAddresses() ([]string, error) {
 	var addrStrs []string
-	err := w.Manager.ForEachActiveAddress(func(addr btcutil.Address) error {
+	err := w.Manager.ForEachActiveAddress(func(addr bchutil.Address) error {
 		addrStrs = append(addrStrs, addr.EncodeAddress())
 		return nil
 	})
@@ -1695,15 +1695,15 @@ func (w *Wallet) SortedActivePaymentAddresses() ([]string, error) {
 }
 
 // NewAddress returns the next external chained address for a wallet.
-func (w *Wallet) NewAddress(account uint32) (btcutil.Address, error) {
+func (w *Wallet) NewAddress(account uint32) (bchutil.Address, error) {
 	// Get next address from wallet.
 	addrs, err := w.Manager.NextExternalAddresses(account, 1)
 	if err != nil {
 		return nil, err
 	}
 
-	// Request updates from btcd for new transactions sent to this address.
-	utilAddrs := make([]btcutil.Address, len(addrs))
+	// Request updates from bchd for new transactions sent to this address.
+	utilAddrs := make([]bchutil.Address, len(addrs))
 	for i, addr := range addrs {
 		utilAddrs[i] = addr.Address()
 	}
@@ -1729,15 +1729,15 @@ func (w *Wallet) NewAddress(account uint32) (btcutil.Address, error) {
 }
 
 // NewChangeAddress returns a new change address for a wallet.
-func (w *Wallet) NewChangeAddress(account uint32) (btcutil.Address, error) {
+func (w *Wallet) NewChangeAddress(account uint32) (bchutil.Address, error) {
 	// Get next chained change address from wallet for account.
 	addrs, err := w.Manager.NextInternalAddresses(account, 1)
 	if err != nil {
 		return nil, err
 	}
 
-	// Request updates from btcd for new transactions sent to this address.
-	utilAddrs := make([]btcutil.Address, len(addrs))
+	// Request updates from bchd for new transactions sent to this address.
+	utilAddrs := make([]bchutil.Address, len(addrs))
 	for i, addr := range addrs {
 		utilAddrs[i] = addr.Address()
 	}
@@ -1774,11 +1774,11 @@ func confirms(txHeight, curHeight int32) int32 {
 // TotalReceivedForAccount iterates through a wallet's transaction history,
 // returning the total amount of bitcoins received for a single wallet
 // account.
-func (w *Wallet) TotalReceivedForAccount(account uint32, minConf int32) (btcutil.Amount, int32, error) {
+func (w *Wallet) TotalReceivedForAccount(account uint32, minConf int32) (bchutil.Amount, int32, error) {
 	syncBlock := w.Manager.SyncedTo()
 
 	var (
-		amount     btcutil.Amount
+		amount     bchutil.Amount
 		lastConf   int32 // Confs of the last matching transaction.
 		stopHeight int32
 	)
@@ -1814,12 +1814,12 @@ func (w *Wallet) TotalReceivedForAccount(account uint32, minConf int32) (btcutil
 // TotalReceivedForAddr iterates through a wallet's transaction history,
 // returning the total amount of bitcoins received for a single wallet
 // address.
-func (w *Wallet) TotalReceivedForAddr(addr btcutil.Address, minConf int32) (btcutil.Amount, error) {
+func (w *Wallet) TotalReceivedForAddr(addr bchutil.Address, minConf int32) (bchutil.Amount, error) {
 	syncBlock := w.Manager.SyncedTo()
 
 	var (
 		addrStr    = addr.EncodeAddress()
-		amount     btcutil.Amount
+		amount     bchutil.Amount
 		stopHeight int32
 	)
 
@@ -1922,7 +1922,7 @@ type SignatureError struct {
 // The transaction pointed to by tx is modified by this function.
 func (w *Wallet) SignTransaction(tx *wire.MsgTx, hashType txscript.SigHashType,
 	additionalPrevScripts map[wire.OutPoint][]byte,
-	additionalKeysByAddress map[string]*btcutil.WIF,
+	additionalKeysByAddress map[string]*bchutil.WIF,
 	p2shRedeemScriptsByAddress map[string][]byte) ([]SignatureError, error) {
 
 	var signErrors []SignatureError
@@ -1945,8 +1945,8 @@ func (w *Wallet) SignTransaction(tx *wire.MsgTx, hashType txscript.SigHashType,
 
 		// Set up our callbacks that we pass to txscript so it can
 		// look up the appropriate keys and scripts by address.
-		getKey := txscript.KeyClosure(func(addr btcutil.Address) (
-			*btcec.PrivateKey, bool, error) {
+		getKey := txscript.KeyClosure(func(addr bchutil.Address) (
+			*bchec.PrivateKey, bool, error) {
 			if len(additionalKeysByAddress) != 0 {
 				addrStr := addr.EncodeAddress()
 				wif, ok := additionalKeysByAddress[addrStr]
@@ -1975,7 +1975,7 @@ func (w *Wallet) SignTransaction(tx *wire.MsgTx, hashType txscript.SigHashType,
 			return key, pka.Compressed(), nil
 		})
 		getScript := txscript.ScriptClosure(func(
-			addr btcutil.Address) ([]byte, error) {
+			addr bchutil.Address) ([]byte, error) {
 			// If keys were provided then we can only use the
 			// redeem scripts provided with our inputs, too.
 			if len(additionalKeysByAddress) != 0 {

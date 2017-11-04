@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2016 The btcsuite developers
+// Copyright (c) 2013-2016 The bchsuite developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -60,7 +60,7 @@ type indexedIncidence struct {
 type debit struct {
 	txHash chainhash.Hash
 	index  uint32
-	amount btcutil.Amount
+	amount bchutil.Amount
 	spends indexedIncidence
 }
 
@@ -68,7 +68,7 @@ type debit struct {
 type credit struct {
 	outPoint wire.OutPoint
 	block    Block
-	amount   btcutil.Amount
+	amount   bchutil.Amount
 	change   bool
 	spentBy  indexedIncidence // Index == ^uint32(0) if unspent
 }
@@ -122,7 +122,7 @@ func NewTxRecordFromMsgTx(msgTx *wire.MsgTx, received time.Time) (*TxRecord, err
 type Credit struct {
 	wire.OutPoint
 	BlockMeta
-	Amount       btcutil.Amount
+	Amount       bchutil.Amount
 	PkScript     []byte
 	Received     time.Time
 	FromCoinBase bool
@@ -431,7 +431,7 @@ func (s *Store) addCredit(ns walletdb.Bucket, rec *TxRecord, block *BlockMeta, i
 		if existsRawUnminedCredit(ns, k) != nil {
 			return false, nil
 		}
-		v := valueUnminedCredit(btcutil.Amount(rec.MsgTx.TxOut[index].Value), change)
+		v := valueUnminedCredit(bchutil.Amount(rec.MsgTx.TxOut[index].Value), change)
 		return true, putRawUnminedCredit(ns, k, v)
 	}
 
@@ -440,7 +440,7 @@ func (s *Store) addCredit(ns walletdb.Bucket, rec *TxRecord, block *BlockMeta, i
 		return false, nil
 	}
 
-	txOutAmt := btcutil.Amount(rec.MsgTx.TxOut[index].Value)
+	txOutAmt := bchutil.Amount(rec.MsgTx.TxOut[index].Value)
 	log.Debugf("Marking transaction %v output %d (%v) spendable",
 		rec.Hash, index, txOutAmt)
 
@@ -536,7 +536,7 @@ func (s *Store) rollback(ns walletdb.Bucket, height int32) error {
 
 					unspentKey, credKey := existsUnspent(ns, &op)
 					if credKey != nil {
-						minedBalance -= btcutil.Amount(output.Value)
+						minedBalance -= bchutil.Amount(output.Value)
 						err = deleteRawUnspent(ns, unspentKey)
 						if err != nil {
 							return err
@@ -589,7 +589,7 @@ func (s *Store) rollback(ns walletdb.Bucket, height int32) error {
 				// may have already been removed from a
 				// previously removed transaction record in
 				// this rollback.
-				var amt btcutil.Amount
+				var amt bchutil.Amount
 				amt, err = unspendRawCredit(ns, credKey)
 				if err != nil {
 					return err
@@ -648,7 +648,7 @@ func (s *Store) rollback(ns walletdb.Bucket, height int32) error {
 
 				credKey := existsRawUnspent(ns, outPointKey)
 				if credKey != nil {
-					minedBalance -= btcutil.Amount(output.Value)
+					minedBalance -= bchutil.Amount(output.Value)
 					err = deleteRawUnspent(ns, outPointKey)
 					if err != nil {
 						return err
@@ -740,7 +740,7 @@ func (s *Store) unspentOutputs(ns walletdb.Bucket) ([]Credit, error) {
 				Block: block,
 				Time:  blockTime,
 			},
-			Amount:       btcutil.Amount(txOut.Value),
+			Amount:       bchutil.Amount(txOut.Value),
 			PkScript:     txOut.PkScript,
 			Received:     rec.Received,
 			FromCoinBase: blockchain.IsCoinBaseTx(&rec.MsgTx),
@@ -783,7 +783,7 @@ func (s *Store) unspentOutputs(ns walletdb.Bucket) ([]Credit, error) {
 			BlockMeta: BlockMeta{
 				Block: Block{Height: -1},
 			},
-			Amount:       btcutil.Amount(txOut.Value),
+			Amount:       bchutil.Amount(txOut.Value),
 			PkScript:     txOut.PkScript,
 			Received:     rec.Received,
 			FromCoinBase: blockchain.IsCoinBaseTx(&rec.MsgTx),
@@ -809,8 +809,8 @@ func (s *Store) unspentOutputs(ns walletdb.Bucket) ([]Credit, error) {
 //
 // Balance may return unexpected results if syncHeight is lower than the block
 // height of the most recent mined transaction in the store.
-func (s *Store) Balance(minConf, syncHeight int32) (btcutil.Amount, error) {
-	var amt btcutil.Amount
+func (s *Store) Balance(minConf, syncHeight int32) (bchutil.Amount, error) {
+	var amt bchutil.Amount
 	err := scopedView(s.namespace, func(ns walletdb.Bucket) error {
 		var err error
 		amt, err = s.balance(ns, minConf, syncHeight)
@@ -819,7 +819,7 @@ func (s *Store) Balance(minConf, syncHeight int32) (btcutil.Amount, error) {
 	return amt, err
 }
 
-func (s *Store) balance(ns walletdb.Bucket, minConf int32, syncHeight int32) (btcutil.Amount, error) {
+func (s *Store) balance(ns walletdb.Bucket, minConf int32, syncHeight int32) (bchutil.Amount, error) {
 	bal, err := fetchMinedBalance(ns)
 	if err != nil {
 		return 0, err

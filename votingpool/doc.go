@@ -1,9 +1,9 @@
-// Copyright (c) 2014 The btcsuite developers
+// Copyright (c) 2014 The bchsuite developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
 /*
-Package votingpool provides voting pool functionality for btcwallet.
+Package votingpool provides voting pool functionality for bchwallet.
 
 Overview
 

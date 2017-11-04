@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2016 The btcsuite developers
+// Copyright (c) 2015-2016 The bchsuite developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -10,7 +10,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/bchsuite/bchd/btcjson"
+	"github.com/bchsuite/bchd/bchjson"
 	"github.com/bchsuite/bchd/chaincfg/chainhash"
 	"github.com/bchsuite/bchd/txscript"
 	"github.com/bchsuite/bchd/wire"
@@ -20,12 +20,12 @@ import (
 	"github.com/bchsuite/bchwallet/netparams"
 	"github.com/bchsuite/bchwallet/wallet/txauthor"
 	"github.com/bchsuite/bchwallet/wallet/txrules"
-	"github.com/btcsuite/golangcrypto/ssh/terminal"
+	"github.com/bchsuite/golangcrypto/ssh/terminal"
 	"github.com/jessevdk/go-flags"
 )
 
 var (
-	walletDataDirectory = btcutil.AppDataDir("btcwallet", false)
+	walletDataDirectory = bchutil.AppDataDir("bchwallet", false)
 	newlineBytes        = []byte{'\n'}
 )
 
@@ -137,14 +137,14 @@ func (noInputValue) Error() string { return "no input value" }
 // output is consumed.  The InputSource does not return any previous output
 // scripts as they are not needed for creating the unsinged transaction and are
 // looked up again by the wallet during the call to signrawtransaction.
-func makeInputSource(outputs []btcjson.ListUnspentResult) txauthor.InputSource {
+func makeInputSource(outputs []bchjson.ListUnspentResult) txauthor.InputSource {
 	var (
-		totalInputValue btcutil.Amount
+		totalInputValue bchutil.Amount
 		inputs          = make([]*wire.TxIn, 0, len(outputs))
 		sourceErr       error
 	)
 	for _, output := range outputs {
-		outputAmount, err := btcutil.NewAmount(output.Amount)
+		outputAmount, err := bchutil.NewAmount(output.Amount)
 		if err != nil {
 			sourceErr = fmt.Errorf(
 				"invalid amount `%v` in listunspent result",
@@ -177,7 +177,7 @@ func makeInputSource(outputs []btcjson.ListUnspentResult) txauthor.InputSource {
 		sourceErr = noInputValue{}
 	}
 
-	return func(btcutil.Amount) (btcutil.Amount, []*wire.TxIn, [][]byte, error) {
+	return func(bchutil.Amount) (bchutil.Amount, []*wire.TxIn, [][]byte, error) {
 		return totalInputValue, inputs, nil, sourceErr
 	}
 }
@@ -185,7 +185,7 @@ func makeInputSource(outputs []btcjson.ListUnspentResult) txauthor.InputSource {
 // makeDestinationScriptSource creates a ChangeSource which is used to receive
 // all correlated previous input value.  A non-change address is created by this
 // function.
-func makeDestinationScriptSource(rpcClient *btcrpcclient.Client, accountName string) txauthor.ChangeSource {
+func makeDestinationScriptSource(rpcClient *bchrpcclient.Client, accountName string) txauthor.ChangeSource {
 	return func() ([]byte, error) {
 		destinationAddress, err := rpcClient.GetNewAddress(accountName)
 		if err != nil {
@@ -213,7 +213,7 @@ func sweep() error {
 	if err != nil {
 		return errContext(err, "failed to read RPC certificate")
 	}
-	rpcClient, err := btcrpcclient.New(&btcrpcclient.ConnConfig{
+	rpcClient, err := bchrpcclient.New(&bchrpcclient.ConnConfig{
 		Host:         opts.RPCConnect,
 		User:         opts.RPCUsername,
 		Pass:         rpcPassword,
@@ -233,7 +233,7 @@ func sweep() error {
 	if err != nil {
 		return errContext(err, "failed to fetch unspent outputs")
 	}
-	sourceOutputs := make(map[string][]btcjson.ListUnspentResult)
+	sourceOutputs := make(map[string][]bchjson.ListUnspentResult)
 	for _, unspentOutput := range unspentOutputs {
 		if !unspentOutput.Spendable {
 			continue
@@ -256,7 +256,7 @@ func sweep() error {
 		}
 	}
 
-	var totalSwept btcutil.Amount
+	var totalSwept bchutil.Amount
 	var numErrors int
 	var reportError = func(format string, args ...interface{}) {
 		fmt.Fprintf(os.Stderr, format, args...)
@@ -299,7 +299,7 @@ func sweep() error {
 			continue
 		}
 
-		outputAmount := btcutil.Amount(tx.Tx.TxOut[0].Value)
+		outputAmount := bchutil.Amount(tx.Tx.TxOut[0].Value)
 		fmt.Printf("Swept %v to destination account with transaction %v\n",
 			outputAmount, txHash)
 		totalSwept += outputAmount
@@ -329,11 +329,11 @@ func promptSecret(what string) (string, error) {
 	return string(input), nil
 }
 
-func saneOutputValue(amount btcutil.Amount) bool {
-	return amount >= 0 && amount <= btcutil.MaxSatoshi
+func saneOutputValue(amount bchutil.Amount) bool {
+	return amount >= 0 && amount <= bchutil.MaxSatoshi
 }
 
-func parseOutPoint(input *btcjson.ListUnspentResult) (wire.OutPoint, error) {
+func parseOutPoint(input *bchjson.ListUnspentResult) (wire.OutPoint, error) {
 	txHash, err := chainhash.NewHashFromStr(input.TxID)
 	if err != nil {
 		return wire.OutPoint{}, err

@@ -1,8 +1,8 @@
 waddrmgr
 ========
 
-[![Build Status](https://travis-ci.org/btcsuite/btcwallet.png?branch=master)]
-(https://travis-ci.org/btcsuite/btcwallet)
+[![Build Status](https://travis-ci.org/bchsuite/bchwallet.png?branch=master)]
+(https://travis-ci.org/bchsuite/bchwallet)
 
 Package waddrmgr provides a secure hierarchical deterministic wallet address
 manager.

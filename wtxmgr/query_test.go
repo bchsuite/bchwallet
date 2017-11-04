@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 The btcsuite developers
+// Copyright (c) 2015-2017 The bchsuite developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -309,7 +309,7 @@ func TestStoreQueries(t *testing.T) {
 	newState.blocks[0][0].Credits = []CreditRecord{
 		{
 			Index:  0,
-			Amount: btcutil.Amount(recA.MsgTx.TxOut[0].Value),
+			Amount: bchutil.Amount(recA.MsgTx.TxOut[0].Value),
 			Spent:  false,
 			Change: true,
 		},
@@ -323,7 +323,7 @@ func TestStoreQueries(t *testing.T) {
 	})
 
 	// Insert another unmined transaction which spends txA:0, splitting the
-	// amount into outputs of 40 and 60 BTC.
+	// amount into outputs of 40 and 60 BCH.
 	txB := spendOutput(&recA.Hash, 0, 40e8, 60e8)
 	recB := newTxRecordFromMsgTx(txB, timeNow())
 	newState = lastState.deepCopy()
@@ -333,7 +333,7 @@ func TestStoreQueries(t *testing.T) {
 		Block:    BlockMeta{Block: Block{Height: -1}},
 		Debits: []DebitRecord{
 			{
-				Amount: btcutil.Amount(recA.MsgTx.TxOut[0].Value),
+				Amount: bchutil.Amount(recA.MsgTx.TxOut[0].Value),
 				Index:  0, // recB.MsgTx.TxIn index
 			},
 		},
@@ -350,7 +350,7 @@ func TestStoreQueries(t *testing.T) {
 	newState.blocks[0][1].Credits = []CreditRecord{
 		{
 			Index:  0,
-			Amount: btcutil.Amount(recB.MsgTx.TxOut[0].Value),
+			Amount: bchutil.Amount(recB.MsgTx.TxOut[0].Value),
 			Spent:  false,
 			Change: false,
 		},

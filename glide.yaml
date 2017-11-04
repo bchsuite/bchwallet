@@ -5,8 +5,8 @@ import:
 - package: github.com/bchsuite/bchd
   subpackages:
   - blockchain
-  - btcec
-  - btcjson
+  - bchec
+  - bchjson
   - chaincfg
   - chaincfg/chainhash
   - txscript
@@ -16,13 +16,13 @@ import:
 - package: github.com/bchsuite/bchutil
   subpackages:
   - hdkeychain
-- package: github.com/btcsuite/golangcrypto
+- package: github.com/bchsuite/golangcrypto
   subpackages:
   - nacl/secretbox
   - ripemd160
   - scrypt
   - ssh/terminal
-- package: github.com/btcsuite/websocket
+- package: github.com/bchsuite/websocket
 - package: github.com/golang/protobuf
   subpackages:
   - proto

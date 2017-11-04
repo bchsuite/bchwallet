@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2016 The btcsuite developers
+// Copyright (c) 2015-2016 The bchsuite developers
 //
 // Permission to use, copy, modify, and distribute this software for any
 // purpose with or without fee is hereby granted, provided that the above
@@ -18,7 +18,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/bchsuite/bchd/btcjson"
+	"github.com/bchsuite/bchd/bchjson"
 	"github.com/bchsuite/bchwallet/internal/rpchelp"
 )
 
@@ -54,7 +54,7 @@ func TestRPCMethodHelpGeneration(t *testing.T) {
 		for _, m := range rpchelp.Methods {
 			delete(svrMethods, m.Method)
 
-			helpText, err := btcjson.GenerateHelp(m.Method, rpchelp.HelpDescs[i].Descs, m.ResultTypes...)
+			helpText, err := bchjson.GenerateHelp(m.Method, rpchelp.HelpDescs[i].Descs, m.ResultTypes...)
 			if err != nil {
 				t.Errorf("Cannot generate '%s' help for method '%s': missing description for '%s'",
 					locale, m.Method, err)
@@ -91,7 +91,7 @@ func TestRPCMethodUsageGeneration(t *testing.T) {
 	for _, m := range rpchelp.Methods {
 		delete(svrMethods, m.Method)
 
-		usage, err := btcjson.MethodUsageText(m.Method)
+		usage, err := bchjson.MethodUsageText(m.Method)
 		if err != nil {
 			t.Errorf("Cannot generate single line usage for method '%s': %v",
 				m.Method, err)

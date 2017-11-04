@@ -1,4 +1,4 @@
-// Copyright (c) 2014 The btcsuite developers
+// Copyright (c) 2014 The bchsuite developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/bchsuite/bchd/btcec"
+	"github.com/bchsuite/bchd/bchec"
 	"github.com/bchsuite/bchutil"
 	"github.com/bchsuite/bchutil/hdkeychain"
 	"github.com/bchsuite/bchwallet/internal/zero"
@@ -23,8 +23,8 @@ type ManagedAddress interface {
 	// Account returns the account the address is associated with.
 	Account() uint32
 
-	// Address returns a btcutil.Address for the backing address.
-	Address() btcutil.Address
+	// Address returns a bchutil.Address for the backing address.
+	Address() bchutil.Address
 
 	// AddrHash returns the key or script hash related to the address
 	AddrHash() []byte
@@ -50,7 +50,7 @@ type ManagedPubKeyAddress interface {
 	ManagedAddress
 
 	// PubKey returns the public key associated with the address.
-	PubKey() *btcec.PublicKey
+	PubKey() *bchec.PublicKey
 
 	// ExportPubKey returns the public key associated with the address
 	// serialized as a hex encoded string.
@@ -59,11 +59,11 @@ type ManagedPubKeyAddress interface {
 	// PrivKey returns the private key for the address.  It can fail if the
 	// address manager is watching-only or locked, or the address does not
 	// have any keys.
-	PrivKey() (*btcec.PrivateKey, error)
+	PrivKey() (*bchec.PrivateKey, error)
 
 	// ExportPrivKey returns the private key associated with the address
 	// serialized as Wallet Import Format (WIF).
-	ExportPrivKey() (*btcutil.WIF, error)
+	ExportPrivKey() (*bchutil.WIF, error)
 }
 
 // ManagedScriptAddress extends ManagedAddress and represents a pay-to-script-hash
@@ -81,12 +81,12 @@ type ManagedScriptAddress interface {
 type managedAddress struct {
 	manager          *Manager
 	account          uint32
-	address          *btcutil.AddressPubKeyHash
+	address          *bchutil.AddressPubKeyHash
 	imported         bool
 	internal         bool
 	compressed       bool
 	used             bool
-	pubKey           *btcec.PublicKey
+	pubKey           *bchec.PublicKey
 	privKeyEncrypted []byte
 	privKeyCT        []byte // non-nil if unlocked
 	privKeyMutex     sync.Mutex
@@ -138,11 +138,11 @@ func (a *managedAddress) Account() uint32 {
 	return a.account
 }
 
-// Address returns the btcutil.Address which represents the managed address.
+// Address returns the bchutil.Address which represents the managed address.
 // This will be a pay-to-pubkey-hash address.
 //
 // This is part of the ManagedAddress interface implementation.
-func (a *managedAddress) Address() btcutil.Address {
+func (a *managedAddress) Address() bchutil.Address {
 	return a.address
 }
 
@@ -186,7 +186,7 @@ func (a *managedAddress) Used() (bool, error) {
 // PubKey returns the public key associated with the address.
 //
 // This is part of the ManagedPubKeyAddress interface implementation.
-func (a *managedAddress) PubKey() *btcec.PublicKey {
+func (a *managedAddress) PubKey() *bchec.PublicKey {
 	return a.pubKey
 }
 
@@ -211,7 +211,7 @@ func (a *managedAddress) ExportPubKey() string {
 // manager is watching-only or locked, or the address does not have any keys.
 //
 // This is part of the ManagedPubKeyAddress interface implementation.
-func (a *managedAddress) PrivKey() (*btcec.PrivateKey, error) {
+func (a *managedAddress) PrivKey() (*bchec.PrivateKey, error) {
 	// No private keys are available for a watching-only address manager.
 	if a.manager.watchingOnly {
 		return nil, managerError(ErrWatchingOnly, errWatchingOnly, nil)
@@ -233,7 +233,7 @@ func (a *managedAddress) PrivKey() (*btcec.PrivateKey, error) {
 		return nil, err
 	}
 
-	privKey, _ := btcec.PrivKeyFromBytes(btcec.S256(), privKeyCopy)
+	privKey, _ := bchec.PrivKeyFromBytes(bchec.S256(), privKeyCopy)
 	zero.Bytes(privKeyCopy)
 	return privKey, nil
 }
@@ -242,27 +242,27 @@ func (a *managedAddress) PrivKey() (*btcec.PrivateKey, error) {
 // Import Format (WIF).
 //
 // This is part of the ManagedPubKeyAddress interface implementation.
-func (a *managedAddress) ExportPrivKey() (*btcutil.WIF, error) {
+func (a *managedAddress) ExportPrivKey() (*bchutil.WIF, error) {
 	pk, err := a.PrivKey()
 	if err != nil {
 		return nil, err
 	}
 
-	return btcutil.NewWIF(pk, a.manager.chainParams, a.compressed)
+	return bchutil.NewWIF(pk, a.manager.chainParams, a.compressed)
 }
 
 // newManagedAddressWithoutPrivKey returns a new managed address based on the
 // passed account, public key, and whether or not the public key should be
 // compressed.
-func newManagedAddressWithoutPrivKey(m *Manager, account uint32, pubKey *btcec.PublicKey, compressed bool) (*managedAddress, error) {
+func newManagedAddressWithoutPrivKey(m *Manager, account uint32, pubKey *bchec.PublicKey, compressed bool) (*managedAddress, error) {
 	// Create a pay-to-pubkey-hash address from the public key.
 	var pubKeyHash []byte
 	if compressed {
-		pubKeyHash = btcutil.Hash160(pubKey.SerializeCompressed())
+		pubKeyHash = bchutil.Hash160(pubKey.SerializeCompressed())
 	} else {
-		pubKeyHash = btcutil.Hash160(pubKey.SerializeUncompressed())
+		pubKeyHash = bchutil.Hash160(pubKey.SerializeUncompressed())
 	}
-	address, err := btcutil.NewAddressPubKeyHash(pubKeyHash, m.chainParams)
+	address, err := bchutil.NewAddressPubKeyHash(pubKeyHash, m.chainParams)
 	if err != nil {
 		return nil, err
 	}
@@ -283,7 +283,7 @@ func newManagedAddressWithoutPrivKey(m *Manager, account uint32, pubKey *btcec.P
 // newManagedAddress returns a new managed address based on the passed account,
 // private key, and whether or not the public key is compressed.  The managed
 // address will have access to the private and public keys.
-func newManagedAddress(m *Manager, account uint32, privKey *btcec.PrivateKey, compressed bool) (*managedAddress, error) {
+func newManagedAddress(m *Manager, account uint32, privKey *bchec.PrivateKey, compressed bool) (*managedAddress, error) {
 	// Encrypt the private key.
 	//
 	// NOTE: The privKeyBytes here are set into the managed address which
@@ -297,7 +297,7 @@ func newManagedAddress(m *Manager, account uint32, privKey *btcec.PrivateKey, co
 
 	// Leverage the code to create a managed address without a private key
 	// and then add the private key to it.
-	ecPubKey := (*btcec.PublicKey)(&privKey.PublicKey)
+	ecPubKey := (*bchec.PublicKey)(&privKey.PublicKey)
 	managedAddr, err := newManagedAddressWithoutPrivKey(m, account,
 		ecPubKey, compressed)
 	if err != nil {
@@ -349,7 +349,7 @@ func newManagedAddressFromExtKey(m *Manager, account uint32, key *hdkeychain.Ext
 type scriptAddress struct {
 	manager         *Manager
 	account         uint32
-	address         *btcutil.AddressScriptHash
+	address         *bchutil.AddressScriptHash
 	scriptEncrypted []byte
 	scriptCT        []byte
 	scriptMutex     sync.Mutex
@@ -401,11 +401,11 @@ func (a *scriptAddress) Account() uint32 {
 	return a.account
 }
 
-// Address returns the btcutil.Address which represents the managed address.
+// Address returns the bchutil.Address which represents the managed address.
 // This will be a pay-to-script-hash address.
 //
 // This is part of the ManagedAddress interface implementation.
-func (a *scriptAddress) Address() btcutil.Address {
+func (a *scriptAddress) Address() bchutil.Address {
 	return a.address
 }
 
@@ -473,7 +473,7 @@ func (a *scriptAddress) Script() ([]byte, error) {
 
 // newScriptAddress initializes and returns a new pay-to-script-hash address.
 func newScriptAddress(m *Manager, account uint32, scriptHash, scriptEncrypted []byte) (*scriptAddress, error) {
-	address, err := btcutil.NewAddressScriptHashFromHash(scriptHash,
+	address, err := bchutil.NewAddressScriptHashFromHash(scriptHash,
 		m.chainParams)
 	if err != nil {
 		return nil, err

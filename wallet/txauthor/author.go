@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The btcsuite developers
+// Copyright (c) 2016 The bchsuite developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -23,7 +23,7 @@ import (
 // can not be satisified, this can be signaled by returning a total amount less
 // than the target or by returning a more detailed error implementing
 // InputSourceError.
-type InputSource func(target btcutil.Amount) (total btcutil.Amount, inputs []*wire.TxIn, scripts [][]byte, err error)
+type InputSource func(target bchutil.Amount) (total bchutil.Amount, inputs []*wire.TxIn, scripts [][]byte, err error)
 
 // InputSourceError describes the failure to provide enough input value from
 // unspent transaction outputs to meet a target amount.  A typed error is used
@@ -48,7 +48,7 @@ func (insufficientFundsError) Error() string {
 type AuthoredTx struct {
 	Tx          *wire.MsgTx
 	PrevScripts [][]byte
-	TotalInput  btcutil.Amount
+	TotalInput  bchutil.Amount
 	ChangeIndex int // negative if no change
 }
 
@@ -75,7 +75,7 @@ type ChangeSource func() ([]byte, error)
 // InputSourceError is returned.
 //
 // BUGS: Fee estimation may be off when redeeming non-compressed P2PKH outputs.
-func NewUnsignedTransaction(outputs []*wire.TxOut, relayFeePerKb btcutil.Amount,
+func NewUnsignedTransaction(outputs []*wire.TxOut, relayFeePerKb bchutil.Amount,
 	fetchInputs InputSource, fetchChange ChangeSource) (*AuthoredTx, error) {
 
 	targetAmount := h.SumOutputValues(outputs)

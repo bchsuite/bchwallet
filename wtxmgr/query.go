@@ -1,4 +1,4 @@
-// Copyright (c) 2015 The btcsuite developers
+// Copyright (c) 2015 The bchsuite developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -16,7 +16,7 @@ import (
 // transaction.  Further details may be looked up by indexing a wire.MsgTx.TxOut
 // with the Index field.
 type CreditRecord struct {
-	Amount btcutil.Amount
+	Amount bchutil.Amount
 	Index  uint32
 	Spent  bool
 	Change bool
@@ -26,7 +26,7 @@ type CreditRecord struct {
 // transaction.  Further details may be looked up by indexing a wire.MsgTx.TxIn
 // with the Index field.
 type DebitRecord struct {
-	Amount btcutil.Amount
+	Amount bchutil.Amount
 	Index  uint32
 }
 

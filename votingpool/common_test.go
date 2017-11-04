@@ -1,4 +1,4 @@
-// Copyright (c) 2014 The btcsuite developers
+// Copyright (c) 2014 The bchsuite developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -18,8 +18,8 @@ func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	// Enable logging (Debug level) to aid debugging failing tests.
-	logger := btclog.NewBackend(os.Stdout).Logger("TEST")
-	logger.SetLevel(btclog.LevelDebug)
+	logger := bchlog.NewBackend(os.Stdout).Logger("TEST")
+	logger.SetLevel(bchlog.LevelDebug)
 	UseLogger(logger)
 }
 

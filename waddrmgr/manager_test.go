@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2016 The btcsuite developers
+// Copyright (c) 2014-2016 The bchsuite developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -337,7 +337,7 @@ func testExternalAddresses(tc *testContext) bool {
 		chainParams := tc.manager.ChainParams()
 		for i := 0; i < len(expectedExternalAddrs); i++ {
 			pkHash := expectedExternalAddrs[i].addressHash
-			utilAddr, err := btcutil.NewAddressPubKeyHash(pkHash,
+			utilAddr, err := bchutil.NewAddressPubKeyHash(pkHash,
 				chainParams)
 			if err != nil {
 				tc.t.Errorf("%s NewAddressPubKeyHash #%d: "+
@@ -464,7 +464,7 @@ func testInternalAddresses(tc *testContext) bool {
 		chainParams := tc.manager.ChainParams()
 		for i := 0; i < len(expectedInternalAddrs); i++ {
 			pkHash := expectedInternalAddrs[i].addressHash
-			utilAddr, err := btcutil.NewAddressPubKeyHash(pkHash,
+			utilAddr, err := bchutil.NewAddressPubKeyHash(pkHash,
 				chainParams)
 			if err != nil {
 				tc.t.Errorf("%s NewAddressPubKeyHash #%d: "+
@@ -662,7 +662,7 @@ func testImportPrivateKey(tc *testContext) bool {
 	if tc.create {
 		for i, test := range tests {
 			test.expected.privKeyWIF = test.in
-			wif, err := btcutil.DecodeWIF(test.in)
+			wif, err := bchutil.DecodeWIF(test.in)
 			if err != nil {
 				tc.t.Errorf("%s DecodeWIF #%d (%s): unexpected "+
 					"error: %v", prefix, i, test.name, err)
@@ -693,7 +693,7 @@ func testImportPrivateKey(tc *testContext) bool {
 
 			// Use the Address API to retrieve each of the expected
 			// new addresses and ensure they're accurate.
-			utilAddr, err := btcutil.NewAddressPubKeyHash(
+			utilAddr, err := bchutil.NewAddressPubKeyHash(
 				test.expected.addressHash, chainParams)
 			if err != nil {
 				tc.t.Errorf("%s NewAddressPubKeyHash #%d (%s): "+
@@ -846,7 +846,7 @@ func testImportScript(tc *testContext) bool {
 
 			// Use the Address API to retrieve each of the expected
 			// new addresses and ensure they're accurate.
-			utilAddr, err := btcutil.NewAddressScriptHash(test.in,
+			utilAddr, err := bchutil.NewAddressScriptHash(test.in,
 				chainParams)
 			if err != nil {
 				tc.t.Errorf("%s NewAddressScriptHash #%d (%s): "+
@@ -929,13 +929,13 @@ func testMarkUsed(tc *testContext) bool {
 	for i, test := range tests {
 		addrHash := test.in
 
-		var addr btcutil.Address
+		var addr bchutil.Address
 		var err error
 		switch test.typ {
 		case addrPubKeyHash:
-			addr, err = btcutil.NewAddressPubKeyHash(addrHash, chainParams)
+			addr, err = bchutil.NewAddressPubKeyHash(addrHash, chainParams)
 		case addrScriptHash:
-			addr, err = btcutil.NewAddressScriptHashFromHash(addrHash, chainParams)
+			addr, err = bchutil.NewAddressScriptHashFromHash(addrHash, chainParams)
 		default:
 			panic("unreachable")
 		}
@@ -1200,7 +1200,7 @@ func testLookupAccount(tc *testContext) bool {
 	// Test account lookup for default account adddress
 	var expectedAccount uint32
 	for i, addr := range expectedAddrs {
-		addr, err := btcutil.NewAddressPubKeyHash(addr.addressHash,
+		addr, err := bchutil.NewAddressPubKeyHash(addr.addressHash,
 			tc.manager.ChainParams())
 		if err != nil {
 			tc.t.Errorf("AddrAccount #%d: unexpected error: %v", i, err)

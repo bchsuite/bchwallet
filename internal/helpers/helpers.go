@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The btcsuite developers
+// Copyright (c) 2016 The bchsuite developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -12,9 +12,9 @@ import (
 )
 
 // SumOutputValues sums up the list of TxOuts and returns an Amount.
-func SumOutputValues(outputs []*wire.TxOut) (totalOutput btcutil.Amount) {
+func SumOutputValues(outputs []*wire.TxOut) (totalOutput bchutil.Amount) {
 	for _, txOut := range outputs {
-		totalOutput += btcutil.Amount(txOut.Value)
+		totalOutput += bchutil.Amount(txOut.Value)
 	}
 	return totalOutput
 }

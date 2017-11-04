@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2016 The btcsuite developers
+// Copyright (c) 2015-2016 The bchsuite developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -98,13 +98,13 @@ func makeTxSummary(w *Wallet, details *wtxmgr.TxDetails) TransactionSummary {
 		}
 		serializedTx = buf.Bytes()
 	}
-	var fee btcutil.Amount
+	var fee bchutil.Amount
 	if len(details.Debits) == len(details.MsgTx.TxIn) {
 		for _, deb := range details.Debits {
 			fee += deb.Amount
 		}
 		for _, txOut := range details.MsgTx.TxOut {
-			fee -= btcutil.Amount(txOut.Value)
+			fee -= bchutil.Amount(txOut.Value)
 		}
 	}
 	var inputs []TransactionSummaryInput
@@ -143,7 +143,7 @@ func makeTxSummary(w *Wallet, details *wtxmgr.TxDetails) TransactionSummary {
 	}
 }
 
-func totalBalances(w *Wallet, m map[uint32]btcutil.Amount) error {
+func totalBalances(w *Wallet, m map[uint32]bchutil.Amount) error {
 	unspent, err := w.TxStore.UnspentOutputs()
 	if err != nil {
 		return err
@@ -166,7 +166,7 @@ func totalBalances(w *Wallet, m map[uint32]btcutil.Amount) error {
 	return nil
 }
 
-func flattenBalanceMap(m map[uint32]btcutil.Amount) []AccountBalance {
+func flattenBalanceMap(m map[uint32]bchutil.Amount) []AccountBalance {
 	s := make([]AccountBalance, 0, len(m))
 	for k, v := range m {
 		s = append(s, AccountBalance{Account: k, TotalBalance: v})
@@ -174,7 +174,7 @@ func flattenBalanceMap(m map[uint32]btcutil.Amount) []AccountBalance {
 	return s
 }
 
-func relevantAccounts(w *Wallet, m map[uint32]btcutil.Amount, txs []TransactionSummary) {
+func relevantAccounts(w *Wallet, m map[uint32]bchutil.Amount, txs []TransactionSummary) {
 	for _, tx := range txs {
 		for _, d := range tx.MyInputs {
 			m[d.PreviousAccount] = 0
@@ -205,7 +205,7 @@ func (s *NotificationServer) notifyUnminedTransaction(details *wtxmgr.TxDetails)
 		log.Errorf("Cannot fetch unmined transaction hashes: %v", err)
 		return
 	}
-	bals := make(map[uint32]btcutil.Amount)
+	bals := make(map[uint32]bchutil.Amount)
 	relevantAccounts(s.wallet, bals, unminedTxs)
 	err = totalBalances(s.wallet, bals)
 	if err != nil {
@@ -292,7 +292,7 @@ func (s *NotificationServer) notifyAttachedBlock(block *wtxmgr.BlockMeta) {
 	}
 	s.currentTxNtfn.UnminedTransactionHashes = unminedHashes
 
-	bals := make(map[uint32]btcutil.Amount)
+	bals := make(map[uint32]bchutil.Amount)
 	for _, b := range s.currentTxNtfn.AttachedBlocks {
 		relevantAccounts(s.wallet, bals, b.Transactions)
 	}
@@ -351,7 +351,7 @@ type TransactionSummary struct {
 	Transaction []byte
 	MyInputs    []TransactionSummaryInput
 	MyOutputs   []TransactionSummaryOutput
-	Fee         btcutil.Amount
+	Fee         bchutil.Amount
 	Timestamp   int64
 }
 
@@ -362,7 +362,7 @@ type TransactionSummary struct {
 type TransactionSummaryInput struct {
 	Index           uint32
 	PreviousAccount uint32
-	PreviousAmount  btcutil.Amount
+	PreviousAmount  bchutil.Amount
 }
 
 // TransactionSummaryOutput describes wallet properties of a transaction output
@@ -380,7 +380,7 @@ type TransactionSummaryOutput struct {
 // so they are not included.
 type AccountBalance struct {
 	Account      uint32
-	TotalBalance btcutil.Amount
+	TotalBalance bchutil.Amount
 }
 
 // TransactionNotificationsClient receives TransactionNotifications from the

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 The btcsuite developers
+// Copyright (c) 2015 The bchsuite developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -15,11 +15,11 @@ import (
 
 var (
 	// Spends: bogus
-	// Outputs: 10 BTC
+	// Outputs: 10 BCH
 	exampleTxRecordA *wtxmgr.TxRecord
 
 	// Spends: A:0
-	// Outputs: 5 BTC, 5 BTC
+	// Outputs: 5 BCH, 5 BCH
 	exampleTxRecordB *wtxmgr.TxRecord
 )
 
@@ -72,7 +72,7 @@ func ExampleStore_Balance() {
 		fmt.Printf("%v, %v, %v\n", zeroConfBal, oneConfBal, sixConfBal)
 	}
 
-	// Insert a transaction which outputs 10 BTC unmined and mark the output
+	// Insert a transaction which outputs 10 BCH unmined and mark the output
 	// as a credit.
 	err = s.InsertTx(exampleTxRecordA, nil)
 	if err != nil {
@@ -97,9 +97,9 @@ func ExampleStore_Balance() {
 	printBalances(105)
 
 	// Output:
-	// 10 BTC, 0 BTC, 0 BTC
-	// 10 BTC, 10 BTC, 0 BTC
-	// 10 BTC, 10 BTC, 10 BTC
+	// 10 BCH, 0 BCH, 0 BCH
+	// 10 BCH, 10 BCH, 0 BCH
+	// 10 BCH, 10 BCH, 10 BCH
 }
 
 func ExampleStore_Rollback() {
@@ -110,7 +110,7 @@ func ExampleStore_Rollback() {
 		return
 	}
 
-	// Insert a transaction which outputs 10 BTC in a block at height 100.
+	// Insert a transaction which outputs 10 BCH in a block at height 100.
 	err = s.InsertTx(exampleTxRecordA, &exampleBlock100)
 	if err != nil {
 		fmt.Println(err)
@@ -168,7 +168,7 @@ func Example_basicUsage() {
 		return
 	}
 
-	// Insert an unmined transaction that outputs 10 BTC to a wallet address
+	// Insert an unmined transaction that outputs 10 BCH to a wallet address
 	// at output 0.
 	err = s.InsertTx(exampleTxRecordA, nil)
 	if err != nil {
@@ -182,7 +182,7 @@ func Example_basicUsage() {
 	}
 
 	// Insert a second transaction which spends the output, and creates two
-	// outputs.  Mark the second one (5 BTC) as wallet change.
+	// outputs.  Mark the second one (5 BCH) as wallet change.
 	err = s.InsertTx(exampleTxRecordB, nil)
 	if err != nil {
 		fmt.Println(err)
@@ -225,6 +225,6 @@ func Example_basicUsage() {
 	}
 
 	// Output:
-	// 5 BTC
+	// 5 BCH
 	// true
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2016 The btcsuite developers
+// Copyright (c) 2015-2016 The bchsuite developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -14,7 +14,7 @@ import (
 
 	"github.com/bchsuite/bchutil/hdkeychain"
 	"github.com/bchsuite/bchwallet/internal/legacy/keystore"
-	"github.com/btcsuite/golangcrypto/ssh/terminal"
+	"github.com/bchsuite/golangcrypto/ssh/terminal"
 )
 
 // ProvideSeed is used to prompt for the wallet seed which maybe required during
