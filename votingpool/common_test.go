@@ -10,8 +10,8 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/btcsuite/btclog"
-	"github.com/btcsuite/btcwallet/waddrmgr"
+	"github.com/bchsuite/bchlog"
+	"github.com/bchsuite/bchwallet/waddrmgr"
 )
 
 func init() {

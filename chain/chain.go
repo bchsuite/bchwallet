@@ -9,13 +9,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/btcsuite/btcd/btcjson"
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcd/chaincfg/chainhash"
-	"github.com/btcsuite/btcrpcclient"
-	"github.com/btcsuite/btcutil"
-	"github.com/btcsuite/btcwallet/waddrmgr"
-	"github.com/btcsuite/btcwallet/wtxmgr"
+	"github.com/bchsuite/bchd/btcjson"
+	"github.com/bchsuite/bchd/chaincfg"
+	"github.com/bchsuite/bchd/chaincfg/chainhash"
+	"github.com/bchsuite/bchrpcclient"
+	"github.com/bchsuite/bchutil"
+	"github.com/bchsuite/bchwallet/waddrmgr"
+	"github.com/bchsuite/bchwallet/wtxmgr"
 )
 
 // RPCClient represents a persistent client connection to a bitcoin RPC server
@@ -368,7 +368,7 @@ out:
 			// loop from blocking here forever, but this is much larger
 			// than it needs to be due to btcd processing websocket
 			// requests synchronously (see
-			// https://github.com/btcsuite/btcd/issues/504).  Decrease
+			// https://github.com/bchsuite/bchd/issues/504).  Decrease
 			// this to something saner like 3s when the above issue is
 			// fixed.
 			type sessionResult struct {

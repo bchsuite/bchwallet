@@ -8,12 +8,12 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/btcsuite/btcd/txscript"
-	"github.com/btcsuite/btcutil"
-	"github.com/btcsuite/btcutil/hdkeychain"
-	"github.com/btcsuite/btcwallet/internal/zero"
-	"github.com/btcsuite/btcwallet/waddrmgr"
-	"github.com/btcsuite/btcwallet/walletdb"
+	"github.com/bchsuite/bchd/txscript"
+	"github.com/bchsuite/bchutil"
+	"github.com/bchsuite/bchutil/hdkeychain"
+	"github.com/bchsuite/bchwallet/internal/zero"
+	"github.com/bchsuite/bchwallet/waddrmgr"
+	"github.com/bchsuite/bchwallet/walletdb"
 )
 
 const (

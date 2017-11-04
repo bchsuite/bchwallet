@@ -9,8 +9,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/btcsuite/btcwallet/walletdb"
-	_ "github.com/btcsuite/btcwallet/walletdb/bdb"
+	"github.com/bchsuite/bchwallet/walletdb"
+	_ "github.com/bchsuite/bchwallet/walletdb/bdb"
 )
 
 var (

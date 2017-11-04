@@ -10,11 +10,11 @@ import (
 	"encoding/gob"
 	"fmt"
 
-	"github.com/btcsuite/btcd/txscript"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
-	"github.com/btcsuite/btcwallet/snacl"
-	"github.com/btcsuite/btcwallet/walletdb"
+	"github.com/bchsuite/bchd/txscript"
+	"github.com/bchsuite/bchd/wire"
+	"github.com/bchsuite/bchutil"
+	"github.com/bchsuite/bchwallet/snacl"
+	"github.com/bchsuite/bchwallet/walletdb"
 )
 
 // These constants define the serialized length for a given encrypted extended

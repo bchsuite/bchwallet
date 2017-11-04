@@ -14,11 +14,11 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/btcsuite/btcutil"
-	"github.com/btcsuite/btcwallet/internal/cfgutil"
-	"github.com/btcsuite/btcwallet/internal/legacy/keystore"
-	"github.com/btcsuite/btcwallet/netparams"
-	"github.com/btcsuite/btcwallet/wallet"
+	"github.com/bchsuite/bchutil"
+	"github.com/bchsuite/bchwallet/internal/cfgutil"
+	"github.com/bchsuite/bchwallet/internal/legacy/keystore"
+	"github.com/bchsuite/bchwallet/netparams"
+	"github.com/bchsuite/bchwallet/wallet"
 	flags "github.com/jessevdk/go-flags"
 )
 

@@ -4,7 +4,7 @@
 
 package legacyrpc
 
-import "github.com/btcsuite/btclog"
+import "github.com/bchsuite/bchlog"
 
 var log = btclog.Disabled
 

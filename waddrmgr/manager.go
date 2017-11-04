@@ -10,14 +10,14 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/btcsuite/btcd/btcec"
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcd/chaincfg/chainhash"
-	"github.com/btcsuite/btcutil"
-	"github.com/btcsuite/btcutil/hdkeychain"
-	"github.com/btcsuite/btcwallet/internal/zero"
-	"github.com/btcsuite/btcwallet/snacl"
-	"github.com/btcsuite/btcwallet/walletdb"
+	"github.com/bchsuite/bchd/btcec"
+	"github.com/bchsuite/bchd/chaincfg"
+	"github.com/bchsuite/bchd/chaincfg/chainhash"
+	"github.com/bchsuite/bchutil"
+	"github.com/bchsuite/bchutil/hdkeychain"
+	"github.com/bchsuite/bchwallet/internal/zero"
+	"github.com/bchsuite/bchwallet/snacl"
+	"github.com/bchsuite/bchwallet/walletdb"
 )
 
 const (

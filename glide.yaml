@@ -1,8 +1,8 @@
-package: github.com/btcsuite/btcwallet
+package: github.com/bchsuite/bchwallet
 import:
 - package: github.com/boltdb/bolt
   version: ^1.3.0
-- package: github.com/btcsuite/btcd
+- package: github.com/bchsuite/bchd
   subpackages:
   - blockchain
   - btcec
@@ -11,9 +11,9 @@ import:
   - chaincfg/chainhash
   - txscript
   - wire
-- package: github.com/btcsuite/btclog
-- package: github.com/btcsuite/btcrpcclient
-- package: github.com/btcsuite/btcutil
+- package: github.com/bchsuite/bchlog
+- package: github.com/bchsuite/bchrpcclient
+- package: github.com/bchsuite/bchutil
   subpackages:
   - hdkeychain
 - package: github.com/btcsuite/golangcrypto

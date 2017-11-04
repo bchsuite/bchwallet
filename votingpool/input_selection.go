@@ -21,10 +21,10 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcd/txscript"
-	"github.com/btcsuite/btcutil"
-	"github.com/btcsuite/btcwallet/wtxmgr"
+	"github.com/bchsuite/bchd/chaincfg"
+	"github.com/bchsuite/bchd/txscript"
+	"github.com/bchsuite/bchutil"
+	"github.com/bchsuite/bchwallet/wtxmgr"
 )
 
 const eligibleInputMinConfirmations = 100
